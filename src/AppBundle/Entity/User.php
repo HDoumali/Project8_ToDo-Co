@@ -43,6 +43,12 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Task", mappedBy="user", cascade={"persist", "remove"})
      */
     private $tasks;
+    
+    /**
+     *@ORM\Column(type="array")
+     *@Assert\NotBlank(message="Vous devez choisir un role dans la liste")
+     */
+    private $roles;
 
     /**
      * Constructor
@@ -92,9 +98,23 @@ class User implements UserInterface
         $this->email = $email;
     }
 
+    /**
+     * Set roles
+     *
+     * @param array $roles
+     *
+     * @return User
+     */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return $this->roles;
     }
 
     public function eraseCredentials()
@@ -134,4 +154,5 @@ class User implements UserInterface
     {
         return $this->tasks;
     }
+
 }
