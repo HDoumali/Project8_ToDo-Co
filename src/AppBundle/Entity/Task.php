@@ -42,7 +42,6 @@ class Task
     
     /**
      *@ORM\ManyToOne(targetEntity="AppBundle\Entity\User", inversedBy="tasks")
-     *@ORM\JoinColumn(nullable=false)
      */
     private $user;
 
