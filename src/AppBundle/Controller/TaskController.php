@@ -26,7 +26,7 @@ class TaskController extends Controller
         $task = new Task();
         $user = $this->getUser();
         $task->setUser($user);
-        
+
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
@@ -85,13 +85,19 @@ class TaskController extends Controller
      * @Route("/tasks/{id}/delete", name="task_delete")
      */
     public function deleteTaskAction(Task $task)
-    {
+    {   
+        if ($task->getUser() === $this->getUser()) {
+
         $em = $this->getDoctrine()->getManager();
         $em->remove($task);
         $em->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
+        } else {
+            $this->addFlash('success', 'Vous ne pouvez pas supprimer cette tache.');
+        }
 
         return $this->redirectToRoute('task_list');
+        
     }
 }
