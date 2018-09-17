@@ -13,4 +13,13 @@ Class SecurityControllerTest extends WebTestCase
 
 		$this->assertSame(200, $client->getResponse()->getStatusCode());
 	}
+
+	public function testHomepage()
+	{
+		$client = static::createClient();
+		$crawler = $client->request('GET', '/login');
+
+		$this->assertSame(1, $crawler->filter('html:contains("Nom d\'utilisateur")')->count());
+		$this->assertSame(1, $crawler->filter('html:contains("Mot de passe")')->count());
+	}
 }
