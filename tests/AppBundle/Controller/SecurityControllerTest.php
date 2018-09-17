@@ -52,4 +52,20 @@ Class SecurityControllerTest extends WebTestCase
         $this->assertSame(1, $crawler->filter('html:contains("Bienvenue sur Todo List")')->count());
 
 	}
+
+	public function testInvalidCredentials()
+	{
+		$client = $this->createClient();
+        $crawler = $client->request('GET', '/login');
+
+        $form = $crawler->selectButton('Se connecter')->form();
+        $form['_username'] = 'invalid';
+        $form['_password'] = 'credentials';
+
+        $client->submit($form);
+
+        $crawler = $client->followRedirect();
+
+        $this->assertSame(1, $crawler->filter('div.alert.alert-danger:contains("Invalid credentials")')->count());
+	}
 }
