@@ -22,6 +22,7 @@ class UserController extends Controller
 
     /**
      * @Route("/users/create", name="user_create")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function createAction(Request $request)
     {
