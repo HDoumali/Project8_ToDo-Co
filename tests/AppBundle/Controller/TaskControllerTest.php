@@ -5,9 +5,19 @@ namespace tests\AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
+use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
 
 Class TaskControllerTest extends WebTestCase
 {
+	private $client;
+
+	public function setUp()
+	{
+		$this->client = static::createClient();
+	}
+
 	public function testListTask()
 	{
 		$client = $this->createClient();
@@ -58,18 +68,9 @@ Class TaskControllerTest extends WebTestCase
 
 	public function testEditTask()
 	{
-		$client = static::createClient();
-		$crawler = $client->request('GET', '/login');
-
-		$form = $crawler->selectButton('Se connecter')->form();
-		$form['_username'] = 'test2';
-		$form['_password'] = 'test2';
-
-		$client->submit($form);
-
-		$crawler = $client->followRedirect();
+		$this->logIn();
         
-		$crawler = $client->request('GET', '/tasks/29/edit');
+		$crawler = $this->client->request('GET', '/tasks/29/edit');
 
 		$this->assertSame(1, $crawler->filter('html:contains("Title")')->count());
 		$this->assertSame(1, $crawler->filter('html:contains("Content")')->count());
@@ -78,10 +79,79 @@ Class TaskControllerTest extends WebTestCase
 		$form['task[title]'] = 'Test edit';
 		$form['task[content]'] = 'Test edit';
 
-		$client->submit($form);
+		$this->client->submit($form);
 
-		$crawler = $client->followRedirect();
+		$crawler = $this->client->followRedirect();
 
 		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! La tâche a bien été modifiée.")')->count()); 
+	}
+
+	public function testDeleteAnAssociatedTask()
+	{
+		$crawler = $this->client->request('GET', '/tasks/57/delete', array(), array(), array(
+    		'PHP_AUTH_USER' => 'test2',
+    		'PHP_AUTH_PW'   => 'test2',
+		));
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! La tâche a bien été supprimée.")')->count());		
+	}
+
+	public function testDeleteAnUnassociatedTask()
+	{
+		$crawler = $this->client->request('GET', '/tasks/25/delete', array(), array(), array(
+    		'PHP_AUTH_USER' => 'test2',
+    		'PHP_AUTH_PW'   => 'test2',
+		));
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! Vous ne pouvez pas supprimer cette tache.")')->count());	
+	}
+
+	public function testDeleteAnAnonymousTaskByUser()
+	{
+		$crawler = $this->client->request('GET', '/tasks/59/delete', array(), array(), array(
+    		'PHP_AUTH_USER' => 'Hassan',
+    		'PHP_AUTH_PW'   => 'hassan',
+		));
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! Vous ne pouvez pas supprimer cette tache.")')->count());	
+	}
+
+	public function testDeleteAnAnonymousTaskByAdmin()
+	{
+		$crawler = $this->client->request('GET', '/tasks/59/delete', array(), array(), array(
+    		'PHP_AUTH_USER' => 'test2',
+    		'PHP_AUTH_PW'   => 'test2',
+		));
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! La tâche a bien été supprimée.")')->count());	
+	}
+
+	public function logIn()
+	{
+		$session = $this->client->getContainer()->get('session');
+
+        $firewallName = 'main';
+        
+        $firewallContext = 'main';
+
+        $token = new UsernamePasswordToken('admin', null, $firewallName, array('ROLE_ADMIN'));
+        $session->set('_security_'.$firewallContext, serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->client->getCookieJar()->set($cookie);
+	}
+
+	public function tearDown()
+	{
+		$this->client = null;
 	}
 }

@@ -29,28 +29,15 @@ Class SecurityControllerTest extends WebTestCase
 		$client = $this->createClient();
         $crawler = $client->request('GET', '/login');
 
-		$user = new User();
-		$user->setUsername('testLogin');
-		$plainPassword = 'testlogin';
-		$password = $client->getContainer()->get('security.password_encoder')->encodePassword($user, $plainPassword);
-        $user->setPassword($password);
-        $user->setEmail('testlogin@gmail.com');
-        $user->setRoles(array('ROLE_USER'));
-
-        $em = $client->getContainer()->get('doctrine')->getManager();
-        $em->persist($user);
-        $em->flush();
-
-        $form = $crawler->selectButton('Se connecter')->form();
-        $form['_username'] = $user->getUsername();
-        $form['_password'] = $plainPassword;
+		$form = $crawler->selectButton('Se connecter')->form();
+        $form['_username'] = 'test2';
+        $form['_password'] = 'test2';
 
         $client->submit($form);
 
         $crawler = $client->followRedirect();
 
         $this->assertSame(1, $crawler->filter('html:contains("Bienvenue sur Todo List")')->count());
-
 	}
 
 	public function testInvalidCredentials()
