@@ -72,6 +72,57 @@ Class UserControllerTest extends WebTestCase
 		$this->assertSame(403, $this->client->getResponse()->getStatusCode());
 	}
 
+	public function testCreateUserInvalidEmail()
+	{
+		$this->logInAdmin();
+
+		$crawler = $this->client->request('GET', '/users/create');
+
+		$form = $crawler->selectButton('Ajouter')->form();
+		$form['user[username]'] = 'Test';
+		$form['user[password][first]'] = 'test';
+		$form['user[password][second]'] = 'test';
+		$form['user[email]'] = 'ddd@ddd';
+		$form['user[roles]'] = 'ROLE_USER';
+
+		$this->client->submit($form);
+
+		//$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('html:contains("Créer un utilisateur")')->count());
+	}
+
+	public function testEditUserByAdmin()
+	{
+		$this->logInAdmin();
+
+		$crawler = $this->client->request('GET', '/users/16/edit');
+
+		$this->assertSame(200, $this->client->getResponse()->getStatusCode());
+
+		$form = $crawler->selectButton('Modifier')->form();
+		$form['user[username]'] = 'test2';
+		$form['user[password][first]'] = 'test2';
+		$form['user[password][second]'] = 'test2';
+		$form['user[email]'] = 'test2@gmail.com';
+		$form['user[roles]'] = 'ROLE_ADMIN';
+
+		$this->client->submit($form);
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! L\'utilisateur a bien été modifié")')->count());
+	}
+
+	public function testEditUserByUser()
+	{
+		$this->logInUser();
+
+		$crawler = $this->client->request('GET', '/users/16/edit');
+
+		$this->assertSame(403, $this->client->getResponse()->getStatusCode());
+	}
+
 	public function logInAdmin()
 	{
 		$session = $this->client->getContainer()->get('session');
