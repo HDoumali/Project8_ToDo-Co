@@ -35,6 +35,34 @@ Class UserControllerTest extends WebTestCase
 		$this->assertSame(403, $this->client->getResponse()->getStatusCode());
 	}
 
+	public function testCreateUserByAdmin()
+	{
+		$this->logInAdmin();
+
+		$crawler = $this->client->request('GET', '/');
+
+		$this->assertSame(1, $crawler->filter('html:contains("Créer un utilisateur")')->count());
+
+		$link = $crawler->selectLink('Créer un utilisateur')->link();
+		$crawler = $this->client->click($link);
+
+		$this->assertSame(200, $this->client->getResponse()->getStatusCode());
+
+		$form = $crawler->selectButton('Ajouter')->form();
+		$form['user[username]'] = 'UserTest';
+		$form['user[password][first]'] = 'usertest';
+		$form['user[password][second]'] = 'usertest';
+		$form['user[email]'] = 'usertest@gmail.com';
+		$form['user[roles]'] = 'ROLE_USER';
+
+		$this->client->submit($form);
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(200, $this->client->getResponse()->getStatusCode());
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! L\'utilisateur a bien été ajouté.")')->count());
+	}
+
 	public function logInAdmin()
 	{
 		$session = $this->client->getContainer()->get('session');
