@@ -63,6 +63,15 @@ Class UserControllerTest extends WebTestCase
 		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! L\'utilisateur a bien été ajouté.")')->count());
 	}
 
+	public function testCreateUserByUser()
+	{
+		$this->logInUser();
+
+		$crawler = $this->client->request('GET', '/users/create');
+
+		$this->assertSame(403, $this->client->getResponse()->getStatusCode());
+	}
+
 	public function logInAdmin()
 	{
 		$session = $this->client->getContainer()->get('session');
