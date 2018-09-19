@@ -88,7 +88,7 @@ Class TaskControllerTest extends WebTestCase
 
 	public function testDeleteAnAssociatedTask()
 	{
-		$crawler = $this->client->request('GET', '/tasks/64/delete', array(), array(), array(
+		$crawler = $this->client->request('GET', '/tasks/67/delete', array(), array(), array(
     		'PHP_AUTH_USER' => 'test2',
     		'PHP_AUTH_PW'   => 'test2',
 		));
@@ -112,7 +112,7 @@ Class TaskControllerTest extends WebTestCase
 
 	public function testDeleteAnAnonymousTaskByUser()
 	{
-		$crawler = $this->client->request('GET', '/tasks/65/delete', array(), array(), array(
+		$crawler = $this->client->request('GET', '/tasks/68/delete', array(), array(), array(
     		'PHP_AUTH_USER' => 'Hassan',
     		'PHP_AUTH_PW'   => 'hassan',
 		));
@@ -124,7 +124,7 @@ Class TaskControllerTest extends WebTestCase
 
 	public function testDeleteAnAnonymousTaskByAdmin()
 	{
-		$crawler = $this->client->request('GET', '/tasks/65/delete', array(), array(), array(
+		$crawler = $this->client->request('GET', '/tasks/68/delete', array(), array(), array(
     		'PHP_AUTH_USER' => 'test2',
     		'PHP_AUTH_PW'   => 'test2',
 		));
