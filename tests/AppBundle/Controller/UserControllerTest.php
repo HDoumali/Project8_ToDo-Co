@@ -87,8 +87,6 @@ Class UserControllerTest extends WebTestCase
 
 		$this->client->submit($form);
 
-		//$crawler = $this->client->followRedirect();
-
 		$this->assertSame(1, $crawler->filter('html:contains("Créer un utilisateur")')->count());
 	}
 
