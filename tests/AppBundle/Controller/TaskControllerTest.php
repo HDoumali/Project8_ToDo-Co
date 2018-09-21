@@ -134,6 +134,20 @@ Class TaskControllerTest extends WebTestCase
 		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("Superbe ! La tâche a bien été supprimée.")')->count());	
 	}
 
+	Public function testToggleTask()
+	{
+		$this->logIn();
+
+		$crawler = $this->client->request('GET', '/tasks/25/toggle');
+
+		$this->assertSame(302, $this->client->getResponse()->getStatusCode()); //StatusCode 302 : Redirection d'URL non permanentes
+
+		$crawler = $this->client->followRedirect();
+
+		$this->assertSame(200, $this->client->getResponse()->getStatusCode());
+		$this->assertSame(1, $crawler->filter('div.alert.alert-success:contains("a bien été marquée comme faite.")')->count());
+	}
+
 	public function logIn()
 	{
 		$session = $this->client->getContainer()->get('session');
