@@ -21,10 +21,12 @@ Class TaskTest extends WebTestCase
 		$task->setContent('TaskTest');
 		$task->setIsDone(false);
 		$task->SetUser($user);
+		$task->setCreatedAt(new \DateTime());
 
 		$this->assertSame('TaskTest', $task->getTitle());
 		$this->assertSame('TaskTest', $task->getContent());
 		$this->assertSame($user->getId(), $task->getUser()->getId());
 		$this->assertFalse($task->getIsDone());
+		$this->assertEquals(new \DateTime(), $task->GetCreatedAt());
 	}
 }
