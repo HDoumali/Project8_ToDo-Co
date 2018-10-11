@@ -1,4 +1,4 @@
-# Project 6 Openclassrooms - ToDoList
+# Project 8 Openclassrooms - ToDoList
 
 ## Parcours développeur d'application - PHP/Symfony 
 
