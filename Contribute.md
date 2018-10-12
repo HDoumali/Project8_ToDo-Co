@@ -46,3 +46,27 @@ You will then be asked to write a message to present your proposal for changes t
 the author of the project will consult your proposals, and you will receive a notification by GitHub when he / she integrates them or refuses them.
 
 ![alt tag](https://user.oc-static.com/upload/2016/09/19/14742929911757_PR.png)
+
+### Quality process 
+
+#### Respect PHP Standard Recommandations
+
+- PSR-1 : Basic Coding Standard
+- PSR-2 : Coding Style Guide 
+- PSR-4 : Autoloading Standard
+
+#### Quality
+
+To ensure the quality of our application, we used the Codacy tool that allows us to review our code and control its quality.
+
+#### Performance
+
+To analyze the performance of the ToDoList application, we use the Blackfire tool to analyze the performance of the application.
+
+#### Test
+
+We used PHPUnit to perform the functional and functional tests of the application.
+
+The test coverage report is available on the "web/test-coverage" folder
+
+
