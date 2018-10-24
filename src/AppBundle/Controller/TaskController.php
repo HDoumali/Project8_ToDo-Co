@@ -88,18 +88,18 @@ class TaskController extends Controller
     {   
         if ($task->getUser() === $this->getUser()) {
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($task);
-        $entityManager->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($task);
+            $entityManager->flush();
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
         } elseif ($task->getUser() === null && $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN')){
 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($task);
-        $entityManager->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($task);
+            $entityManager->flush();
 
-        $this->addFlash('success', 'La tâche a bien été supprimée.');
+            $this->addFlash('success', 'La tâche a bien été supprimée.');
         } else {
             $this->addFlash('success', 'Vous ne pouvez pas supprimer cette tache.');
         }
